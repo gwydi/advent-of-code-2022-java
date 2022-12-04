@@ -18,9 +18,17 @@ public class RockPaperScissors {
     public static void main(String[] args) {
         String input = new ChallengeInputReader("src/me/gwydi/aoc/day2/input.txt").readAsString();
         var parsed = parse(input);
-        var result = parsed.stream().map(match -> match.y.match.fight(match.x) + match.y.freeScore).reduce(Integer::sum).orElse(0);
+        var parsed2 = parsePart2(input);
+        var result = playMatch(parsed);
+        var result2 = playMatch(parsed2);
         System.out.println("total points");
         System.out.println(" " + result);
+        System.out.println("correct calculation");
+        System.out.println(" " + result2);
+    }
+
+    public static int playMatch(List<Tuple<HandShape, HandShape>> input) {
+        return input.stream().map(match -> match.y.fight(match.x) + match.y.freeScore).reduce(Integer::sum).orElse(0);
     }
 
     private static List<Tuple<HandShape, HandShape>> parse(String input) {
@@ -30,30 +38,51 @@ public class RockPaperScissors {
         }).toList();
     }
 
+    private static List<Tuple<HandShape, HandShape>> parsePart2(String input) {
+        return Arrays.stream(input.trim().split("\n")).map(s -> {
+            var pair = s.split(" ");
+            var opponentMove = PARSE_MAP.get(pair[0]);
+            return new Tuple<>(opponentMove, getCorrectMove(opponentMove, pair[1]));
+        }).toList();
+    }
+
+    private static HandShape getCorrectMove(HandShape otherMove, String move) {
+        return switch (move) {
+            case "X" -> otherMove.win;
+            case "Y" -> otherMove.draw;
+            case "Z" -> otherMove.lose;
+            default -> throw new IllegalStateException("String on 2nd part hast to be X, Y or Z");
+        };
+    }
+
     private static enum HandShape {
         ROCK(1),
         PAPER(2),
         SCISSORS(3),
         ;
-        public RockPaperScissorsMatch match;
+        public HandShape win;
+        public HandShape lose;
+        public HandShape draw = this;
         public int freeScore;
 
         static {
-            ROCK.match = shape -> switch (shape) {
-                case ROCK -> 3;
-                case PAPER -> 0;
-                case SCISSORS -> 6;
-            };
-            PAPER.match = shape -> switch (shape) {
-                case ROCK -> 6;
-                case PAPER -> 3;
-                case SCISSORS -> 0;
-            };
-            SCISSORS.match = shape -> switch (shape) {
-                case ROCK -> 0;
-                case PAPER -> 6;
-                case SCISSORS -> 3;
-            };
+            ROCK.win = SCISSORS;
+            ROCK.lose = PAPER;
+            PAPER.win = ROCK;
+            PAPER.lose = SCISSORS;
+            SCISSORS.win = PAPER;
+            SCISSORS.lose = ROCK;
+        }
+
+        public int fight(HandShape other) {
+            if (other == win) {
+                return 6;
+            } else if (other == lose) {
+                return 0;
+            } else if (other == draw) {
+                return 3;
+            }
+            throw new IllegalStateException("should be unreachable");
         }
 
         HandShape(int freeScore) {
@@ -61,9 +90,7 @@ public class RockPaperScissors {
         }
     }
 
-    private interface RockPaperScissorsMatch {
-        int fight(HandShape shape);
-    }
 
-    private record Tuple<X, Y>(X x, Y y) { }
+    private record Tuple<X, Y>(X x, Y y) {
+    }
 }
