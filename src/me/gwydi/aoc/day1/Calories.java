@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Calories {
     public static void main(String[] args) {
-        String input = new ChallengeInputReader("src/me/gwydi/aoc/day1/input.txt").readAsString();
+        String input = new ChallengeInputReader("day1/input.txt").readAsString();
         System.out.println("Top Elf");
         System.out.println(getHighestCalories(parse(input)));
         System.out.println("Top 3 Elves");
@@ -15,8 +15,8 @@ public class Calories {
     }
 
     static List<Integer> parse(String input) {
-        return Arrays.stream(input.split("\n\n"))
-                .map(s -> Arrays.stream(s.split("\n"))
+        return Arrays.stream(input.split(System.lineSeparator()+ System.lineSeparator()))
+                .map(s -> Arrays.stream(s.split(System.lineSeparator()))
                         .map(Integer::parseInt).reduce(Integer::sum).orElse(0)).toList();
     }
 

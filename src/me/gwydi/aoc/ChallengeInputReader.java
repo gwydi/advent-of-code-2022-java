@@ -5,9 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ChallengeInputReader {
-    private String path;
+    private static final String PREFIX = "src/me/gwydi/aoc/";
+    private final String path;
     public ChallengeInputReader(String path) {
-        this.path = path;
+        this.path = PREFIX + path;
     }
     public String readAsString() {
         String result = "";

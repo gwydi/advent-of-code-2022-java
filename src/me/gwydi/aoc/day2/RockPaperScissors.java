@@ -16,7 +16,7 @@ public class RockPaperScissors {
     );
 
     public static void main(String[] args) {
-        String input = new ChallengeInputReader("src/me/gwydi/aoc/day2/input.txt").readAsString();
+        String input = new ChallengeInputReader("day2/input.txt").readAsString();
         var parsed = parse(input);
         var parsed2 = parsePart2(input);
         var result = playMatch(parsed);
@@ -32,14 +32,14 @@ public class RockPaperScissors {
     }
 
     private static List<Tuple<HandShape, HandShape>> parse(String input) {
-        return Arrays.stream(input.trim().split("\n")).map(s -> {
+        return Arrays.stream(input.trim().split(System.lineSeparator())).map(s -> {
             var pair = s.split(" ");
             return new Tuple<>(PARSE_MAP.get(pair[0]), PARSE_MAP.get(pair[1]));
         }).toList();
     }
 
     private static List<Tuple<HandShape, HandShape>> parsePart2(String input) {
-        return Arrays.stream(input.trim().split("\n")).map(s -> {
+        return Arrays.stream(input.trim().split(System.lineSeparator())).map(s -> {
             var pair = s.split(" ");
             var opponentMove = PARSE_MAP.get(pair[0]);
             return new Tuple<>(opponentMove, getCorrectMove(opponentMove, pair[1]));
